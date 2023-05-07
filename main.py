@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import spectral
 
 # Define grid
 t_max = 10
@@ -11,10 +12,10 @@ Delta = t_max / N
 h = np.exp(-(t - t_max/2)**2) # Gaussian
 
 # Computing the derivative
-H = np.fft.fft(h)
-f = np.fft.fftfreq(len(t), Delta)
+H = spectral.fft(h)
+f = spectral.fftfreq(len(t), Delta)
 H_dot = 2 * np.pi * 1j * f * H
-h_dot = np.fft.ifft(H_dot)
+h_dot = spectral.ifft(H_dot)
 
 # Plot results
 plt.plot(t, h, label=f'$h(t)$')
