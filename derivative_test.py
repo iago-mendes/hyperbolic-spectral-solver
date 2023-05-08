@@ -12,10 +12,7 @@ Delta = t_max / N
 h = np.exp(-(t - t_max/2)**2) # Gaussian
 
 # Computing the derivative
-H = spectral.fft(h)
-f = spectral.fftfreq(len(t), Delta)
-H_dot = 2 * np.pi * 1j * f * H
-h_dot = spectral.ifft(H_dot)
+h_dot = spectral.derivative(h, N, Delta)
 
 # Plot results
 plt.plot(t, h, label=f'$h(t)$')
