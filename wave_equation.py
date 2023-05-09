@@ -4,7 +4,7 @@ from matplotlib.animation import FuncAnimation
 import spectral
 
 # Define grid
-N = 101
+N = 1001
 x_min = 0
 x_max = 10
 x, Delta = spectral.grid(N, x_min, x_max)
@@ -52,6 +52,10 @@ for step in range(N_steps):
 	# Hard reflection
 	# u_minus[0] = - u_plus[0] # left
 	u_plus[-1] = - u_minus[-1] # right
+
+	psi = spectral.filter(psi)
+	u_plus = spectral.filter(u_plus)
+	u_minus = spectral.filter(u_minus)
 	
 	if step % N_steps_per_frame == 0:
 		solution_log = np.vstack((solution_log, psi))
@@ -62,7 +66,7 @@ for step in range(N_steps):
 fig, ax = plt.subplots()
 line, = ax.plot(x, solution_log[0,:])
 plt.title('Boundary conditions: left = soft; right = hard')
-plt.ylim(-10, 10)
+plt.ylim(-1.5, 1.5)
 
 def animate(i):
 	line.set_ydata(solution_log[i,:])

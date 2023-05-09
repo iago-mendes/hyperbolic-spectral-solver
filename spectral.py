@@ -29,3 +29,17 @@ def derivative(h):
 	h_prime = np.fft.ifft(H_prime)
 	
 	return h_prime.real
+
+def logistic_low_pass(fmag, cutoff, width):
+	return 1./(1. + np.exp((fmag-cutoff)/width))
+
+def filter(h):
+	H = np.fft.fft(h)
+
+	fmag = np.abs(f)
+	cutoff = .7*np.max(f)
+	width = .05*np.max(f)
+	H *= logistic_low_pass(fmag, cutoff, width)
+
+	h = np.fft.ifft(H).real
+	return h
