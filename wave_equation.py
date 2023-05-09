@@ -4,23 +4,22 @@ from matplotlib.animation import FuncAnimation
 import spectral
 
 # Define grid
-N = 100
+N = 101
 x_min = 0
 x_max = 10
-x = np.linspace(x_min, x_max, N, endpoint=False)
-Delta = (x_max - x_min) / N
+x, Delta = spectral.grid(N, x_min, x_max)
 
 # Right sides of PDEs
 def f(psi, u_plus, u_minus):
 	psi_dot = 1/2 * (u_plus + u_minus)
-	u_plus_dot = spectral.derivative(u_plus, N, Delta)
-	u_minus_dot = - spectral.derivative(u_minus, N, Delta)
+	u_plus_dot = spectral.derivative(u_plus)
+	u_minus_dot = - spectral.derivative(u_minus)
 	return psi_dot, u_plus_dot, u_minus_dot
 
 # Initial value
 psi = np.exp(- (x - x_max/2)**2)
 pi = np.zeros_like(psi)
-phi = spectral.derivative(psi, N, Delta)
+phi = spectral.derivative(psi)
 
 # Set up logs for animation
 solution_log = np.zeros((1, N))

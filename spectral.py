@@ -1,8 +1,31 @@
 import numpy as np
 
-def derivative(h, N, Delta):
-	H = np.fft.fft(h)
+# Reference variables (with default values)
+N_ref = 101
+x_min_ref = 0
+x_max_ref = 10
+
+# Grid variables (with default values)
+x = np.linspace(x_min_ref, x_max_ref, N_ref, endpoint=False)
+Delta = (x_max_ref - x_min_ref) / N_ref
+f = np.fft.fftfreq(N_ref, Delta)
+
+def grid(N, x_min, x_max):
+	global N_ref, x_min_ref, x_max_ref, x, Delta, f
+	N_ref = N
+	x_min_ref = x_min
+	x_max_ref = x_max
+	
+	x = np.linspace(x_min, x_max, N, endpoint=False)
+	Delta = (x_max - x_min) / N
 	f = np.fft.fftfreq(N, Delta)
+
+	return x, Delta
+
+def derivative(h):
+	H = np.fft.fft(h)
+
 	H_prime = 2 * np.pi * 1j * f * H
 	h_prime = np.fft.ifft(H_prime)
+	
 	return h_prime.real
