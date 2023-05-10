@@ -3,6 +3,18 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import spectral
 
+# Define initial condition
+initial_conditions = {
+	1: 'positive-positive',
+	2: 'positive-negative'
+}
+initial_choice = int(input(
+	'Choose a initial condition: \n\t(1) positive-positive\n\t(2) positive-negative\n1/2: '
+))
+if initial_choice not in initial_conditions.keys():
+	print('Error: invalid initial condition!')
+	exit(1)
+
 # Define boundary conditions
 boundary_conditions = {
 	1: ['none', 'none'],
@@ -30,18 +42,21 @@ def f(psi, u_plus, u_minus):
 	u_minus_dot = - spectral.derivative(u_minus)
 	return psi_dot, u_plus_dot, u_minus_dot
 
-# Initial value
-psi = np.exp(- (x - x_max/2)**2)
-pi = np.zeros_like(psi)
-phi = spectral.derivative(psi)
+# Enforce initial value
+if initial_choice == 1: # positive-positive
+	psi = np.exp(- (x - x_max/2)**2)
+	pi = np.zeros_like(psi)
+	phi = spectral.derivative(psi)
+	u_plus = pi + phi
+	u_minus = pi - phi
+elif initial_choice == 2: # positive-negative
+	psi = np.zeros_like(x)
+	u_plus = .5 * np.exp(- (x - x_max/2)**2)
+	u_minus = - .5 * np.exp(- (x - x_max/2)**2)
 
 # Set up logs for animation
 solution_log = np.zeros((1, N))
 solution_log[0,:] = psi[:]
-
-# Characteristic decomposition
-u_plus = pi + phi
-u_minus = pi - phi
 
 # RK-4 time-stepping
 dt = 0.01
@@ -83,13 +98,17 @@ for step in range(N_steps):
 fig, ax = plt.subplots()
 line, = ax.plot(x, solution_log[0,:])
 plt.title(f'Boundary conditions: {boundary_conditions[boundary_choice][1]}')
-plt.ylim(-1.5, 1.5)
+
+if initial_choice == 1: # positive-positive
+	plt.ylim(-1.5, 1.5)
+elif initial_choice == 2: # positive-negative
+	plt.ylim(-2, 2)
 
 def animate(i):
 	line.set_ydata(solution_log[i,:])
 	return line,
 
 ani = FuncAnimation(fig, animate, frames=len(solution_log), interval=10)
-ani.save(f'assets/{boundary_conditions[boundary_choice][0]}_{N}.gif', dpi=200, fps=30)
+ani.save(f'assets/{initial_conditions[initial_choice]}_{boundary_conditions[boundary_choice][0]}_{N}.gif', dpi=200, fps=30)
 
 plt.show()
