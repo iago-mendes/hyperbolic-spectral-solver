@@ -75,26 +75,15 @@ for step in range(N_steps):
 	u_minus += dt * 1/6 * (k1_u_minus + 2*k2_u_minus + 2*k3_u_minus + k4_u_minus)
 
 	# Enforce boundary conditions
-	if initial_choice == 1: # positive-positive
-		if boundary_choice == 2:
-			u_minus[0] = u_plus[0] # left = soft
-			u_plus[-1] = u_minus[-1] # right = soft
-		elif boundary_choice == 3:
-			u_minus[0] = u_plus[0] # left = soft
-			u_plus[-1] = - u_minus[-1] # right = hard
-		elif boundary_choice == 4:
-			u_minus[0] = - u_plus[0] # left = hard
-			u_plus[-1] = - u_minus[-1] # right = hard
-	elif initial_choice == 2: # positive-negative
-		if boundary_choice == 2:
-			u_minus[0] = - u_plus[0] # left = soft
-			u_plus[-1] = - u_minus[-1] # right = soft
-		elif boundary_choice == 3:
-			u_minus[0] = - u_plus[0] # left = soft
-			u_plus[-1] = u_minus[-1] # right = hard
-		elif boundary_choice == 4:
-			u_minus[0] = u_plus[0] # left = hard
-			u_plus[-1] = u_minus[-1] # right = hard
+	if boundary_choice == 2:
+		u_minus[0] = u_plus[0] # left = soft
+		u_plus[-1] = u_minus[-1] # right = soft
+	elif boundary_choice == 3:
+		u_minus[0] = u_plus[0] # left = soft
+		u_plus[-1] = - u_minus[-1] # right = hard
+	elif boundary_choice == 4:
+		u_minus[0] = - u_plus[0] # left = hard
+		u_plus[-1] = - u_minus[-1] # right = hard
 
 	psi = spectral.filter(psi)
 	u_plus = spectral.filter(u_plus)
