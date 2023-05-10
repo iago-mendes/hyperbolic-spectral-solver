@@ -3,6 +3,20 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import spectral
 
+# Define boundary conditions
+boundary_conditions = {
+	1: ['none', 'none'],
+	2: ['soft-soft', 'left = soft; right = soft'],
+	3: ['soft-hard', 'left = soft; right = hard'],
+	4: ['hard-hard', 'left = hard; right = hard'],
+}
+boundary_choice = int(input(
+	'Choose a boundary condition: \n\t(1) none\n\t(2) soft-soft\n\t(3) soft-hard\n\t(4) hard-hard\n1/2/3/4: '
+))
+if boundary_choice not in boundary_conditions.keys():
+	print('Error: invalid boundary condition!')
+	exit(1)
+
 # Define grid
 N = 1001
 x_min = 0
@@ -45,13 +59,16 @@ for step in range(N_steps):
 	u_plus += dt * 1/6 * (k1_u_plus + 2*k2_u_plus + 2*k3_u_plus + k4_u_plus)
 	u_minus += dt * 1/6 * (k1_u_minus + 2*k2_u_minus + 2*k3_u_minus + k4_u_minus)
 
-	# Soft reflection
-	u_minus[0] = u_plus[0] # left
-	# u_plus[-1] = u_minus[-1] # right
-
-	# Hard reflection
-	# u_minus[0] = - u_plus[0] # left
-	u_plus[-1] = - u_minus[-1] # right
+	# Enforce boundary conditions
+	if boundary_choice == 2:
+		u_minus[0] = u_plus[0] # left = soft
+		u_plus[-1] = u_minus[-1] # right = soft
+	elif boundary_choice == 3:
+		u_minus[0] = u_plus[0] # left = soft
+		u_plus[-1] = - u_minus[-1] # right = hard
+	elif boundary_choice == 4:
+		u_minus[0] = - u_plus[0] # left = hard
+		u_plus[-1] = - u_minus[-1] # right = hard
 
 	psi = spectral.filter(psi)
 	u_plus = spectral.filter(u_plus)
@@ -65,7 +82,7 @@ for step in range(N_steps):
 # Show animation
 fig, ax = plt.subplots()
 line, = ax.plot(x, solution_log[0,:])
-plt.title('Boundary conditions: left = soft; right = hard')
+plt.title(f'Boundary conditions: {boundary_conditions[boundary_choice][1]}')
 plt.ylim(-1.5, 1.5)
 
 def animate(i):
@@ -73,6 +90,6 @@ def animate(i):
 	return line,
 
 ani = FuncAnimation(fig, animate, frames=len(solution_log), interval=10)
-# ani.save(f'assets/soft-hard_{N}.gif', dpi=200)
+ani.save(f'assets/{boundary_conditions[boundary_choice][0]}_{N}.gif', dpi=200, fps=30)
 
 plt.show()
