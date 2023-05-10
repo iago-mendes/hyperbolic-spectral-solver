@@ -40,9 +40,9 @@ Before doing this project, I had research experience in working with parabolic a
 ## Results from Wave Equation
 
 - Notation for boundary conditions
-	- **none**: periodic domain
-	- **soft**: wave gets reflected in phase
-	- **hard**: wave gets reflected out of phase
+	- **none**: no special treatment
+	- **soft**: wave gets reflected in phase (allowed to oscillate)
+	- **hard**: wave gets reflected out of phase (fixed to 0)
 
 ### Positive Gaussian waves
 
